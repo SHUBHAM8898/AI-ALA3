@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>College Helpdesk Chatbot</title>
+<style>
+*{box-sizing:border-box}body{margin:0;padding:20px;background:#eef3f8;font-family:Arial,sans-serif;color:#172033;display:grid;place-items:center;min-height:100vh}
+.app{width:min(760px,100%);background:#fff;border-radius:18px;overflow:hidden;box-shadow:0 12px 35px #1d35571c}
+header{padding:22px;background:#174a78;color:#fff}h1{margin:0 0 6px;font-size:24px}header p{margin:0;opacity:.9}
+#chat{height:440px;overflow:auto;padding:16px;background:#f8fafc}.msg{max-width:88%;padding:11px 14px;border-radius:14px;margin:10px 0;line-height:1.45;white-space:pre-wrap}
+.bot{background:#e6eef7;border-top-left-radius:4px}.user{background:#174a78;color:white;margin-left:auto;border-top-right-radius:4px}
+form{display:flex;gap:8px;padding:14px;border-top:1px solid #e5eaf0}input{flex:1;min-width:0;padding:13px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px}
+button{border:0;border-radius:10px;padding:0 18px;background:#174a78;color:white;font-weight:bold;cursor:pointer}.quick{display:flex;gap:7px;flex-wrap:wrap;padding:0 14px 12px}
+.quick button{padding:8px 10px;font-size:12px;background:#e8f0f8;color:#174a78}.note{padding:0 16px 16px;color:#64748b;font-size:12px}
+</style></head><body><main class="app">
+<header><h1>College Helpdesk Chatbot</h1><p>Rule-based chatbot • admissions, exams, fees, student services and more</p></header>
+<div id="chat" aria-live="polite"><div class="msg bot">Hello! Welcome to the College Helpdesk. Ask me a question or choose a topic below. Type “help” to see all supported topics.</div></div>
+<div class="quick">
+<button type="button" data-q="How do I apply for admission?">Admissions</button><button type="button" data-q="How do I check exam results?">Exams & Results</button>
+<button type="button" data-q="How can I check attendance?">Attendance</button><button type="button" data-q="Tell me about scholarships">Scholarships</button><button type="button" data-q="What can you do?">Help</button>
+</div>
+<form id="form"><input id="input" placeholder="Type your question here..." autocomplete="off" required><button>Send</button></form>
+<div class="note">This demo uses predefined rules. It does not access live college records; verify deadlines, fees, contacts, and notices with official college sources.</div>
+</main>
+<script>
+const rules=[
+{keys:["hello","hi","hey","good morning","good afternoon","good evening"],a:"Hello! Welcome to the College Helpdesk. Ask me about admissions, courses, fees, exams, attendance, library, scholarships, timetable, departments, certificates, hostel, transport, placements, Wi-Fi, or contacts."},
+{keys:["admission","admissions","apply","application","enroll","enrollment","eligibility","documents required","admission form"],a:"For admission, check your college's official admission notice. Common documents may include previous marksheets, school leaving/transfer certificate, ID proof, photos, and category/income certificates if applicable. Requirements and deadlines vary, so confirm with the admission office."},
+{keys:["course","courses","program","programs","branch","degree","diploma","bachelor","master","syllabus","subject"],a:"Course availability and syllabus depend on the college and semester. Check the official prospectus or department page. Tell me your course or semester if you need general study guidance."},
+{keys:["fee","fees","tuition","payment","pay fees","installment","refund","receipt","accounts"],a:"For exact fees, due dates, instalments, refunds, or receipts, contact the accounts office or check the official student portal. Never share passwords, OTPs, or full payment-card details in chat."},
+{keys:["exam","exams","examination","timetable","date sheet","hall ticket","admit card","result","marksheet","recheck","revaluation","backlog"],a:"For exam timetables, hall tickets, results, rechecking, and backlogs, use the official student/examination portal or contact the exam section. Confirm dates from official notices because they can change."},
+{keys:["attendance","present","absent","attendance percentage","shortage"],a:"Check your latest attendance in the student portal or with your faculty advisor. If you share classes attended and total classes, I can calculate your percentage."},
+{keys:["library","book","books","borrow","issue book","return book","reading room"],a:"The library can help with textbooks, reference material, reading space, and borrowing. Ask the librarian about opening hours, borrowing limits, renewals, and late fees."},
+{keys:["scholarship","financial aid","stipend","digital gujarat","fee assistance","grant"],a:"Scholarship eligibility depends on scheme, income, category, course, and marks. Check the relevant official government/college portal and confirm deadlines with the scholarship cell."},
+{keys:["hostel","accommodation","room","mess","warden"],a:"For hostel availability, fees, rules, mess facilities, and application dates, contact the hostel office. Availability and charges vary by campus."},
+{keys:["bus","transport","route","college bus","pickup","drop","parking"],a:"For bus routes, pickup points, transport fees, parking, and schedules, contact the transport office or check the latest campus notice."},
+{keys:["class timing","college timing","timings","time table","schedule","lecture","period"],a:"Class timings and timetables can differ by semester, division, and day. Check the latest timetable shared by your department or student portal."},
+{keys:["faculty","teacher","professor","hod","department","mentor","advisor"],a:"For faculty contacts, office hours, department information, or mentor assignments, use the official department page or ask your department office."},
+{keys:["certificate","bonafide","leaving certificate","transfer certificate","transcript","character certificate","migration"],a:"For bonafide, transfer/leaving, character, migration, or transcript requests, contact the student section/administration office. Ask about forms, processing time, and fees."},
+{keys:["placement","job","career","campus interview","resume","internship","training"],a:"For internships, placements, resume reviews, and interview training, contact the placement/career cell. Check official notices for eligibility and deadlines."},
+{keys:["wifi","wi-fi","internet","network","computer lab","lab"],a:"For campus Wi-Fi or lab access, contact the IT support team or lab assistant. Never share your password or OTP."},
+{keys:["contact","phone","telephone","email","address","location","office number","helpline"],a:"For verified phone numbers, email addresses, and campus location, check the college's official website or student portal. I won't invent contact details."},
+{keys:["holiday","vacation","closed","open today","working day","public holiday"],a:"Check the latest official college circular or academic calendar for holidays and campus closures. I don't have live access to college notices."},
+{keys:["documents","document","id card","identity card","lost id","student id"],a:"For document submission or a lost student ID, contact the student section and follow the official replacement process."},
+{keys:["complaint","grievance","bullying","harassment","ragging","problem","issue"],a:"For a college complaint, contact your faculty advisor, department head, student grievance cell, or the appropriate campus authority. If anyone is in immediate danger, contact local emergency services or a trusted responsible adult."},
+{keys:["thanks","thank you","thx","thankyou"],a:"You're welcome! I'm glad I could help."},
+{keys:["bye","goodbye","exit","quit","see you"],a:"Goodbye! Best wishes for your studies."},
+{keys:["help","what can you do","options","topics","menu"],a:"I can help with admissions, courses/syllabus, fees, exams/results, attendance, library, scholarships, hostel, transport, timetable, faculty, certificates, placements, Wi-Fi/labs, contacts, holidays, documents, and complaints."}
+];
+function norm(s){return s.toLowerCase().replace(/[^a-z0-9\\s%-]/g," ").replace(/\\s+/g," ").trim()}
+function reply(text){let m=norm(text);if(!m)return "Please type a question or type help.";
+for(const r of rules){for(const k of r.keys){const key=norm(k);if(m===key||(" "+m+" ").includes(" "+key+" ")||m.includes(key))return r.a;}}
+return "I couldn't match that question to my current rules. Try rephrasing it or type 'help'. I can answer common college questions, but I don't have live college records or real-time notices."}
+const chat=document.getElementById("chat"),input=document.getElementById("input");
+function add(t,c){let d=document.createElement("div");d.className="msg "+c;d.textContent=t;chat.appendChild(d);chat.scrollTop=chat.scrollHeight}
+function send(v){if(!v.trim())return;add(v,"user");add(reply(v),"bot");input.value="";input.focus()}
+document.getElementById("form").addEventListener("submit",e=>{e.preventDefault();send(input.value)});
+document.querySelectorAll("[data-q]").forEach(b=>b.addEventListener("click",()=>send(b.dataset.q)));
+</script></body></html>
